@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Result};
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};
-use std::rc::Rc;
 use std::sync::Mutex;
 use tauri::Manager;
 
@@ -63,20 +62,21 @@ impl TerminalInner {
 
         std::thread::spawn(move || {
             let mut buf = [0u8; 1024];
-            let app_handle = Rc::new(app_handle);
 
             loop {
                 // TODO: remove unwrap
                 let read_bytes = reader.read(&mut buf).unwrap();
 
+                // Exit the app when we finish reading stdin
                 if read_bytes == 0 {
+                    app_handle.exit(0);
                     break;
                 }
 
                 let bytes = buf[..read_bytes].to_vec();
 
                 // TODO: remove unwrap
-                app_handle.clone().emit_all("data", bytes).unwrap();
+                app_handle.emit_all("data", bytes).unwrap();
             }
         });
 
