@@ -1,32 +1,45 @@
 import { useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
-import { Terminal } from "xterm";
+import { Terminal as XtermTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
 // import { WebglAddon } from "xterm-addon-webgl";
 // import { CanvasAddon } from "xterm-addon-canvas";
-import "./index.css";
+import { THEME_CATPPUCCIN_MACCIATO } from "../../lib/themes";
 import "xterm/css/xterm.css";
-import { theme } from "./theme";
+import "./terminal.css";
+import { getConfig } from "../../lib/config";
+import { useConfig } from "../../lib/stores/config";
 
-export default function App() {
+export const Terminal = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<XtermTerminal>();
+  const config = useConfig((state) => state.config);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.options.fontSize = config.fontSize;
+    }
+  }, [config]);
 
   useEffect(() => {
     const root = document.querySelector(":root") as HTMLElement;
 
-    for (const [key, value] of Object.entries(theme)) {
+    for (const [key, value] of Object.entries(config.theme)) {
       root.style.setProperty(`--${key}`, value);
     }
 
     if (ref.current) {
-      const terminal = new Terminal({
-        fontFamily: "JetBrainsMono Nerd Font Mono",
-        fontSize: 14,
-        theme,
+      const terminal = new XtermTerminal({
+        fontFamily: config.fontFamily,
+        fontSize: config.fontSize,
+        theme: config.theme,
+        cursorBlink: config.cursorBlink,
       });
+
+      terminalRef.current = terminal;
 
       const fitAddon = new FitAddon();
       const searchAddon = new SearchAddon();
@@ -44,12 +57,8 @@ export default function App() {
       // terminal.loadAddon(new WebglAddon());
       // terminal.loadAddon(new CanvasAddon());
 
-      function focus() {
-        terminal.focus();
-      }
-      function resize() {
-        fitAddon.fit();
-      }
+      const focus = () => terminal.focus();
+      const resize = () => fitAddon.fit();
 
       focus();
       resize();
@@ -82,4 +91,4 @@ export default function App() {
   }, []);
 
   return <div ref={ref} className="terminal" />;
-}
+};

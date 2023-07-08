@@ -69,7 +69,7 @@ impl TerminalInner {
 
                 // Exit the app when we finish reading stdin
                 if read_bytes == 0 {
-                    app_handle.exit(0);
+                    // app_handle.exit(0);
                     break;
                 }
 

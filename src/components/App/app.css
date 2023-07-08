@@ -9,7 +9,7 @@ body {
   background: var(--background);
 }
 
-body, #root, .terminal {
+body, #root {
   width: calc(100vw - var(--padding) * 2);
   height: calc(100vh - var(--padding) * 2);
 }
