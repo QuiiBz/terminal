@@ -1,5 +1,6 @@
 import type { ITheme } from "xterm";
 
+// Catpuccin macciatto
 export const theme: ITheme = {
   foreground: "#CAD3F5",
   background: "#24273A",

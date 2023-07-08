@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
-import { WebglAddon } from "xterm-addon-webgl";
-import { CanvasAddon } from "xterm-addon-canvas";
+// import { WebglAddon } from "xterm-addon-webgl";
+// import { CanvasAddon } from "xterm-addon-canvas";
 import "./index.css";
 import "xterm/css/xterm.css";
 import { theme } from "./theme";

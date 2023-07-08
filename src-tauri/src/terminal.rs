@@ -1,14 +1,14 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use tauri::Manager;
 
-pub struct Terminal(Arc<Mutex<TerminalInner>>);
+pub struct Terminal(Mutex<TerminalInner>);
 
 impl Terminal {
     pub fn new() -> Self {
-        Terminal(Arc::new(Mutex::new(TerminalInner::new())))
+        Terminal(Mutex::new(TerminalInner::new()))
     }
 
     pub fn spawn(
@@ -95,25 +95,37 @@ impl TerminalInner {
     }
 
     pub fn write(&mut self, data: String) -> Result<()> {
-        write!(self.writer.as_mut().unwrap(), "{}", data)?;
+        if let Some(writer) = self.writer.as_mut() {
+            writer.write_all(data.as_bytes())?;
 
-        Ok(())
+            return Ok(());
+        }
+
+        Err(anyhow!("Cannot write to terminal without writer"))
     }
 
-    pub fn resize(&mut self, rows: u16, cols: u16) -> Result<()> {
-        self.master.as_mut().unwrap().resize(PtySize {
-            rows,
-            cols,
-            pixel_width: 0,
-            pixel_height: 0,
-        })?;
+    pub fn resize(&self, rows: u16, cols: u16) -> Result<()> {
+        if let Some(master) = self.master.as_ref() {
+            master.resize(PtySize {
+                rows,
+                cols,
+                pixel_width: 0,
+                pixel_height: 0,
+            })?;
 
-        Ok(())
+            return Ok(());
+        }
+
+        Err(anyhow!("Cannot resize terminal without master"))
     }
 
     pub fn dispose(&mut self) -> Result<()> {
-        self.child.as_mut().unwrap().kill()?;
+        if let Some(child) = self.child.as_mut() {
+            child.kill()?;
 
-        Ok(())
+            return Ok(());
+        }
+
+        Err(anyhow!("Cannot dispose terminal without child"))
     }
 }
