@@ -8,7 +8,7 @@ use commands::{dispose, open, resize, spawn, write};
 use terminal::Terminal;
 
 fn main() {
-    let terminal = Terminal::new();
+    let terminal = Terminal::default();
 
     tauri::Builder::default()
         .manage(terminal)

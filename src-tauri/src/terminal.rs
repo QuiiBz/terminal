@@ -4,13 +4,10 @@ use std::rc::Rc;
 use std::sync::Mutex;
 use tauri::Manager;
 
+#[derive(Default)]
 pub struct Terminal(Mutex<TerminalInner>);
 
 impl Terminal {
-    pub fn new() -> Self {
-        Terminal(Mutex::new(TerminalInner::new()))
-    }
-
     pub fn spawn(
         &self,
         app_handle: tauri::AppHandle,
@@ -34,6 +31,7 @@ impl Terminal {
     }
 }
 
+#[derive(Default)]
 struct TerminalInner {
     master: Option<Box<dyn MasterPty + Send>>,
     child: Option<Box<dyn Child + Send + Sync>>,
@@ -41,14 +39,6 @@ struct TerminalInner {
 }
 
 impl TerminalInner {
-    pub fn new() -> Self {
-        Self {
-            master: None,
-            child: None,
-            writer: None,
-        }
-    }
-
     pub fn spawn(
         &mut self,
         app_handle: tauri::AppHandle,
