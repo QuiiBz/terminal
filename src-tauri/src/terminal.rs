@@ -17,7 +17,7 @@ impl Terminal {
         self.0.lock().unwrap().spawn(app_handle, cols, rows, shell)
     }
 
-    pub fn write(&self, data: String) -> Result<()> {
+    pub fn write(&self, data: Vec<u8>) -> Result<()> {
         self.0.lock().unwrap().write(data)
     }
 
@@ -86,9 +86,9 @@ impl TerminalInner {
         Ok(())
     }
 
-    pub fn write(&mut self, data: String) -> Result<()> {
+    pub fn write(&mut self, data: Vec<u8>) -> Result<()> {
         if let Some(writer) = self.writer.as_mut() {
-            writer.write_all(data.as_bytes())?;
+            writer.write_all(&data)?;
 
             return Ok(());
         }

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 import { Terminal as XtermTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
@@ -47,7 +46,7 @@ export const Terminal = () => {
       terminal.loadAddon(fitAddon);
       terminal.loadAddon(
         new WebLinksAddon((_, uri) => {
-          invoke("open", { uri });
+          emit("open", uri);
         })
       );
       terminal.loadAddon(searchAddon);
@@ -63,14 +62,20 @@ export const Terminal = () => {
       focus();
       resize();
 
-      invoke("spawn");
+      emit("spawn", {
+        rows: terminal.rows,
+        cols: terminal.cols,
+        shell: "zsh",
+      });
+
+      const textEncoder = new TextEncoder();
 
       terminal.onData((data) => {
-        invoke("write", { data });
+        emit("write", { data: Array.from(textEncoder.encode(data)) });
       });
 
       terminal.onResize(({ rows, cols }) => {
-        invoke("resize", { rows, cols });
+        emit("resize", { rows, cols });
       });
 
       listen("data", (data) => {
@@ -85,7 +90,7 @@ export const Terminal = () => {
         window.removeEventListener("resize", resize);
 
         terminal.dispose();
-        invoke("dispose");
+        emit("dispose");
       };
     }
   }, []);
