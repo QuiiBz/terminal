@@ -4,12 +4,10 @@ import { Terminal as XtermTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
-// import { WebglAddon } from "xterm-addon-webgl";
-// import { CanvasAddon } from "xterm-addon-canvas";
-import { THEME_CATPPUCCIN_MACCIATO } from "../../lib/themes";
+import { WebglAddon } from "xterm-addon-webgl";
+import { Unicode11Addon } from "xterm-addon-unicode11";
 import "xterm/css/xterm.css";
 import "./terminal.css";
-import { getConfig } from "../../lib/config";
 import { useConfig } from "../../lib/stores/config";
 
 export const Terminal = () => {
@@ -36,12 +34,14 @@ export const Terminal = () => {
         fontSize: config.fontSize,
         theme: config.theme,
         cursorBlink: config.cursorBlink,
+        allowProposedApi: true,
       });
 
       terminalRef.current = terminal;
 
       const fitAddon = new FitAddon();
       const searchAddon = new SearchAddon();
+      // searchAddon.findNext('foo');
 
       terminal.loadAddon(fitAddon);
       terminal.loadAddon(
@@ -50,11 +50,12 @@ export const Terminal = () => {
         })
       );
       terminal.loadAddon(searchAddon);
-      // searchAddon.findNext('foo');
+      terminal.loadAddon(new Unicode11Addon());
+
+      terminal.unicode.activeVersion = "11";
 
       terminal.open(ref.current);
-      // terminal.loadAddon(new WebglAddon());
-      // terminal.loadAddon(new CanvasAddon());
+      terminal.loadAddon(new WebglAddon());
 
       const focus = () => terminal.focus();
       const resize = () => fitAddon.fit();
