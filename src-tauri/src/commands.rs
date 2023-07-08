@@ -17,8 +17,10 @@ pub fn write(state: State<Terminal>, data: String) {
 
 #[tauri::command]
 pub fn resize(state: State<Terminal>, rows: u16, cols: u16) {
+    println!("Resize: rows: {} cols: {}", rows, cols);
+
     // TODO: remove unwrap
-    state.resize(cols, rows).unwrap();
+    state.resize(rows, cols).unwrap();
 }
 
 #[tauri::command]
