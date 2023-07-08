@@ -9,15 +9,23 @@ import { WebglAddon } from "xterm-addon-webgl";
 import { CanvasAddon } from "xterm-addon-canvas";
 import "./index.css";
 import "xterm/css/xterm.css";
+import { theme } from "./theme";
 
 export default function App() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const root = document.querySelector(":root") as HTMLElement;
+
+    for (const [key, value] of Object.entries(theme)) {
+      root.style.setProperty(`--${key}`, value);
+    }
+
     if (ref.current) {
       const terminal = new Terminal({
         fontFamily: "JetBrainsMono Nerd Font Mono",
-        fontSize: 16,
+        fontSize: 14,
+        theme,
       });
 
       const fitAddon = new FitAddon();

@@ -1,9 +1,32 @@
+:root {
+  --padding: 8px;
+}
+
 body {
   margin: 0;
   overflow: hidden;
+  padding: var(--padding);
+  background: var(--background);
 }
 
 body, #root, .terminal {
-  width: 100vw;
-  height: 100vh;
+  width: calc(100vw - var(--padding) * 2);
+  height: calc(100vh - var(--padding) * 2);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--black);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--brightBlack);
 }
