@@ -32,7 +32,11 @@ export default function App() {
       const searchAddon = new SearchAddon();
 
       terminal.loadAddon(fitAddon);
-      terminal.loadAddon(new WebLinksAddon());
+      terminal.loadAddon(
+        new WebLinksAddon((_, uri) => {
+          invoke("open", { uri });
+        })
+      );
       terminal.loadAddon(searchAddon);
       // searchAddon.findNext('foo');
 

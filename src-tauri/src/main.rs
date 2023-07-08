@@ -4,7 +4,7 @@
 mod commands;
 mod terminal;
 
-use commands::{dispose, resize, spawn, write};
+use commands::{dispose, open, resize, spawn, write};
 use terminal::Terminal;
 
 fn main() {
@@ -12,7 +12,9 @@ fn main() {
 
     tauri::Builder::default()
         .manage(terminal)
-        .invoke_handler(tauri::generate_handler![spawn, write, resize, dispose])
+        .invoke_handler(tauri::generate_handler![
+            spawn, write, resize, dispose, open
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

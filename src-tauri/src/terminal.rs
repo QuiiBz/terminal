@@ -76,6 +76,7 @@ impl TerminalInner {
             let app_handle = Rc::new(app_handle);
 
             loop {
+                // TODO: remove unwrap
                 let read_bytes = reader.read(&mut buf).unwrap();
 
                 if read_bytes == 0 {
@@ -84,6 +85,7 @@ impl TerminalInner {
 
                 let bytes = buf[..read_bytes].to_vec();
 
+                // TODO: remove unwrap
                 app_handle.clone().emit_all("data", bytes).unwrap();
             }
         });
